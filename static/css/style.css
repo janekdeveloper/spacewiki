@@ -1,0 +1,102 @@
+@font-face {
+    font-family: 'nasalization';
+    src: url('../fonts/nasalization-rg.otf') format('opentype'); /* Замість 'truetype' можна використовувати 'woff' або 'woff2', якщо у вас відповідний формат */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-image: url('../img/bg.jpg'); /* Тут вставте URL вашого зображення */
+    background-size: cover; /* Зображення заповнює всю сторінку */
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Колір тексту */
+    font-family: 'nasalization', Arial, sans-serif;
+    text-align: center;
+}
+
+.container {
+    size: cover;
+    width: 90%; /* Ширина контейнера */
+    margin: 0 auto; /* Центрування контейнера */
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.7); /* Чорний фон з 70% прозорістю */
+    border-radius: 10px; /* Закруглені краї для кращого вигляду */
+}
+
+hr {
+    width: 100%; /* Лінія на всю ширину контейнера */
+    height: 2px;
+    background-color: white;
+    border: none;
+    margin: 20px 0; /* Відступи зверху та знизу */
+}
+
+h1 {
+    font-size: 12em; /* Збільшений розмір тексту заголовка */
+    margin: 0; /* Відсутність відступів для заголовка */
+    font-family: 'nasalization', Arial, sans-serif;
+}
+
+p {
+    font-size: 1.5em; /* Збільшений розмір тексту абзацу */
+    margin: 0; /* Відсутність відступів для абзацу */
+}
+
+.custom-button {
+    background-color: #476984; /* Колір фону кнопки */
+    color: white; /* Колір тексту кнопки */
+    border: none; /* Відсутність рамки */
+    padding: 15px 30px; /* Внутрішні відступи */
+    font-size: 1.6em; /* Розмір тексту кнопки */
+    border-radius: 5px; /* Закруглення країв кнопки */
+    cursor: pointer; /* Курсор у вигляді руки при наведенні */
+    transition: background-color 0.3s; /* Анімація зміни кольору фону */
+    font-family: 'nasalization', Arial, sans-serif;
+}
+
+.custom-button:hover {
+    background-color: #3c5969; /* Темніший відтінок при наведенні */
+}
+
+.mode-switcher {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 160px;
+    height: 40px;
+    background-color: #476984;
+    display: flex;
+    justify-content: space-between;
+    padding: 2px;
+    border-radius: 8px;
+    z-index: 1000;
+}
+
+.mode-btn {
+    flex: 1;
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 32px;
+    font-family: 'nasalization', Arial, sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.mode-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Легкое затемнение при наведении */
+}
+
+/* Активная кнопка (та, что выбрана в текущем режиме) */
+.mode-btn.active {
+    border: 1px solid white;
+    border-radius: 32px;
+    cursor: default; /* Неактивное состояние */
+    pointer-events: none; /* Отключаем возможность нажать */
+}

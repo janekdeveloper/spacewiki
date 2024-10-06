@@ -1,0 +1,29 @@
+{
+  "name": "Earth",
+  "characteristics": {
+    "diameter": "12,742 km",
+    "mass": "5.97 × 10^24 kg",
+    "average_distance_from_sun": "149.6 million km (1 astronomical unit)",
+    "year_length": "365.25 days",
+    "surface_temperature": {
+      "min": "-88°C",
+      "max": "+58°C",
+      "average": "+15°C"
+    },
+    "atmosphere": {
+      "nitrogen": "78%",
+      "oxygen": "21%",
+      "other_gases": "1%"
+    }
+  },
+  "current_missions": [
+    {
+      "name": "Earth Satellite Research",
+      "description": "Ongoing research through numerous satellites and missions aimed at studying climate change, atmospheric phenomena, and ecological processes."
+    },
+    {
+      "name": "International Space Station (ISS)",
+      "description": "A collaborative mission where research is conducted from Earth's orbit in various scientific fields."
+    }
+  ]
+}

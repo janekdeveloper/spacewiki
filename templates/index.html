@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceWiki</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> <!-- Підключення CSS-файлу -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <script>
+        // Функция для перенаправления
+        function redirectToClassic() {
+            window.location.href = '/classic'; // Перенаправление на /classic
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>SpaceWiki</h1>
+        <hr>
+        <button class="custom-button" onclick="redirectToClassic()">Press to start</button>
+    </div>
+</body>
+</html>
