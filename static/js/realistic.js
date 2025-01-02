@@ -212,11 +212,12 @@ const trajectories = orbitalData.map(data => new OrbitalTrajectory(
     data.size));
 
 // Создание планеты с текстурой
-function createPlanetWithTexture(radius, texturePath, distance) {
+function createPlanetWithTexture(name, radius, texturePath, distance) {
     const geometry = new THREE.SphereGeometry(radius, 32, 32);
     const texture = textureLoader.load(texturePath);
     const material = new THREE.MeshStandardMaterial({ map: texture });
     const planet = new THREE.Mesh(geometry, material);
+    planet.name = name;
 
     planet.renderOrder = 2; // Задать приоритет рендеринга планет выше, чем у орбит
     planet.rotation.x = Math.PI / 2;
@@ -262,7 +263,7 @@ const planetTextures = [
 
 // Создание планет и их орбит
 const planets = trajectories.map((trajectory, index) => {
-    const planet = createPlanetWithTexture(trajectory.size, planetTextures[index], trajectory.semiMajorAxis);
+    const planet = createPlanetWithTexture(trajectory.name, trajectory.size, planetTextures[index], trajectory.semiMajorAxis);
     createOrbit(trajectory);
     return planet;
 });
@@ -441,6 +442,8 @@ function animate() {
     renderer.render(scene, camera);
 }
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
 
 // Запуск анимации
 animate();
@@ -460,3 +463,72 @@ document.querySelector('.realistic-btn').classList.add('active');
 
 // Астероид Белт. Английская википедия
 // Греки и Троянці. Анлийская википедия
+
+async function loadPlanetInfo() {
+    const response = await fetch('/json');
+    return await response.json();
+}
+
+let planetInfoData = {};
+
+// Fetch the planet info when the script loads
+loadPlanetInfo().then(data => {
+    planetInfoDatas = data; // Store planet info in a variable
+});
+
+// Астероид Белт. Английская википедия
+// Греки и Троянці. Анлийская википедия
+
+function PlanetDataShow(name) {
+    const overlay = document.getElementById('planetOverlay');
+    const nameElement = document.getElementById('overlayPlanetName');
+    const dataElement = document.getElementById('overlayPlanetData');
+
+    const planetInfo = planetInfoDatas[name];
+
+    if (planetInfo) {
+        const characteristics = planetInfo.characteristics;
+
+        // Заполнение информацией о планете
+        dataElement.innerHTML = `
+            <strong>Diameter:</strong> ${characteristics.diameter} <br>
+            <strong>Mass:</strong> ${characteristics.mass} <br>
+            <strong>Distance from Sun:</strong> ${characteristics.average_distance_from_sun} <br>
+            <strong>Year Length:</strong> ${characteristics.year_length} <br>
+            <strong>Temperature:</strong> Min: ${characteristics.surface_temperature.min}, Max: ${characteristics.surface_temperature.max}, Avg: ${characteristics.surface_temperature.average} <br>
+            <strong>Atmosphere Composition:</strong> Nitrogen: ${characteristics.atmosphere.nitrogen}, Oxygen: ${characteristics.atmosphere.oxygen}, Other Gases: ${characteristics.atmosphere.other_gases} <br>
+        `;
+    } else {
+        dataElement.innerHTML = 'No data available.';
+    }
+
+    nameElement.textContent = name;
+    overlay.style.display = 'block';
+}
+
+function onDocumentMouseClick(event) {
+    event.preventDefault();
+
+    // Преобразуем координаты мыши в нормализованные значения для Raycaster (-1 до 1)
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Обновляем луч с текущей позицией камеры и направлением от мыши
+    raycaster.setFromCamera(mouse, camera);
+
+    // Проверяем пересечения с объектами (планетами)
+    const intersects = raycaster.intersectObjects(planets);
+
+    // Если есть пересечение, выводим в консоль название планеты
+    if (intersects.length > 0) {
+        const selectedPlanet = intersects[0].object
+        PlanetDataShow(selectedPlanet.name)
+        console.log(`Clicked on: ${selectedPlanet.name}`);
+    }
+}
+
+document.getElementById('closeInfo').addEventListener('click', () => {
+    document.getElementById('planetOverlay').style.display = 'none';
+});
+// Добавляем событие клика к документу
+window.addEventListener('click', onDocumentMouseClick, false);

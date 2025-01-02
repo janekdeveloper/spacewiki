@@ -212,11 +212,12 @@ const trajectories = orbitalData.map(data => new OrbitalTrajectory(
     data.size));
 
 // Создание планеты с текстурой
-function createPlanetWithTexture(radius, texturePath, distance) {
+function createPlanetWithTexture(name, radius, texturePath, distance) {
     const geometry = new THREE.SphereGeometry(radius+4, 128, 128);
     const texture = textureLoader.load(texturePath);
     const material = new THREE.MeshStandardMaterial({ map: texture });
     const planet = new THREE.Mesh(geometry, material);
+    planet.name = name;
 
     planet.renderOrder = 2; // Задать приоритет рендеринга планет выше, чем у орбит
     planet.rotation.x = Math.PI / 2;
@@ -262,7 +263,7 @@ const planetTextures = [
 
 // Создание планет и их орбит
 const planets = trajectories.map((trajectory, index) => {
-    const planet = createPlanetWithTexture(trajectory.size, planetTextures[index], trajectory.semiMajorAxis);
+    const planet = createPlanetWithTexture(trajectory.name, trajectory.size, planetTextures[index], trajectory.semiMajorAxis);
     createOrbit(trajectory);
     return planet;
 });
@@ -352,38 +353,59 @@ function updatePlanetName() {
 // Начальная установка текста с названием планеты
 updatePlanetName();
 
-// Кнопки для перемещения между планетами
 const buttonContainer = document.createElement('div');
 buttonContainer.style.position = 'fixed';
-buttonContainer.style.backgroundColor = '#333';
+buttonContainer.style.backgroundColor = '#222';
+buttonContainer.style.border = '1px solid #444';
+buttonContainer.style.borderRadius = '8px';
+buttonContainer.style.padding = '5px 10px';
+buttonContainer.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
 buttonContainer.style.bottom = '20px';
 buttonContainer.style.left = '50%';
 buttonContainer.style.transform = 'translateX(-50%)';
 buttonContainer.style.zIndex = '1000';
 document.body.appendChild(buttonContainer);
 
-const leftButton = document.createElement('button');
-leftButton.innerHTML = '←';
-leftButton.style.margin = '0 10px';
-leftButton.onclick = () => {
-    currentPlanetIndex = (currentPlanetIndex - 1 + planets.length) % planets.length; // Оборачиваем в цикле
-    updatePlanetName();
-    teleportToPlanet();
+const createStyledButton = (text, onClick) => {
+    const button = document.createElement('button');
+    button.innerHTML = text;
+    button.style.margin = '0 5px';
+    button.style.padding = '6px 10px';
+    button.style.backgroundColor = '#476984';
+    button.style.color = '#fff';
+    button.style.border = 'none';
+    button.style.borderRadius = '4px';
+    button.style.fontSize = '14px';
+    button.style.cursor = 'pointer';
+    button.style.transition = 'all 0.3s ease';
+    
+    // Hover effects
+    button.onmouseover = () => button.style.backgroundColor = '#5b8ea1';
+    button.onmouseout = () => button.style.backgroundColor = '#476984';
+    
+    // Shadow effect
+    button.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+    button.onclick = onClick;
+
+    return button;
 };
 
-const rightButton = document.createElement('button');
-rightButton.innerHTML = '→';
-rightButton.style.margin = '0 10px';
-rightButton.style.bgcolor = '#010000';
-rightButton.onclick = () => {
-    currentPlanetIndex = (currentPlanetIndex + 1) % planets.length; // Оборачиваем в цикле
+const leftButton = createStyledButton('←', () => {
+    currentPlanetIndex = (currentPlanetIndex - 1 + planets.length) % planets.length;
     updatePlanetName();
     teleportToPlanet();
-};
+});
+
+const rightButton = createStyledButton('→', () => {
+    currentPlanetIndex = (currentPlanetIndex + 1) % planets.length;
+    updatePlanetName();
+    teleportToPlanet();
+});
 
 // Добавляем кнопки на контейнер
 buttonContainer.appendChild(leftButton);
 buttonContainer.appendChild(rightButton);
+
 
 // Функция для телепортации камеры к планете
 function teleportToPlanet() {
@@ -440,6 +462,9 @@ function animate() {
     renderer.render(scene, camera);
 }
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
 // Запуск анимации
 animate();
 
@@ -456,5 +481,71 @@ window.addEventListener('resize', () => {
 
 document.querySelector('.classic-btn').classList.add('active');
 
+async function loadPlanetInfo() {
+    const response = await fetch('/json');
+    return await response.json();
+}
+
+let planetInfoData = {};
+
+// Fetch the planet info when the script loads
+loadPlanetInfo().then(data => {
+    planetInfoDatas = data; // Store planet info in a variable
+});
+
 // Астероид Белт. Английская википедия
 // Греки и Троянці. Анлийская википедия
+
+function PlanetDataShow(name) {
+    const overlay = document.getElementById('planetOverlay');
+    const nameElement = document.getElementById('overlayPlanetName');
+    const dataElement = document.getElementById('overlayPlanetData');
+
+    const planetInfo = planetInfoDatas[name];
+
+    if (planetInfo) {
+        const characteristics = planetInfo.characteristics;
+
+        // Заполнение информацией о планете
+        dataElement.innerHTML = `
+            <strong>Diameter:</strong> ${characteristics.diameter} <br>
+            <strong>Mass:</strong> ${characteristics.mass} <br>
+            <strong>Distance from Sun:</strong> ${characteristics.average_distance_from_sun} <br>
+            <strong>Year Length:</strong> ${characteristics.year_length} <br>
+            <strong>Temperature:</strong> Min: ${characteristics.surface_temperature.min}, Max: ${characteristics.surface_temperature.max}, Avg: ${characteristics.surface_temperature.average} <br>
+            <strong>Atmosphere Composition:</strong> Nitrogen: ${characteristics.atmosphere.nitrogen}, Oxygen: ${characteristics.atmosphere.oxygen}, Other Gases: ${characteristics.atmosphere.other_gases} <br>
+        `;
+    } else {
+        dataElement.innerHTML = 'No data available.';
+    }
+
+    nameElement.textContent = name;
+    overlay.style.display = 'block';
+}
+
+function onDocumentMouseClick(event) {
+    event.preventDefault();
+
+    // Преобразуем координаты мыши в нормализованные значения для Raycaster (-1 до 1)
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Обновляем луч с текущей позицией камеры и направлением от мыши
+    raycaster.setFromCamera(mouse, camera);
+
+    // Проверяем пересечения с объектами (планетами)
+    const intersects = raycaster.intersectObjects(planets);
+
+    // Если есть пересечение, выводим в консоль название планеты
+    if (intersects.length > 0) {
+        const selectedPlanet = intersects[0].object
+        PlanetDataShow(selectedPlanet.name)
+        console.log(`Clicked on: ${selectedPlanet.name}`);
+    }
+}
+
+document.getElementById('closeInfo').addEventListener('click', () => {
+    document.getElementById('planetOverlay').style.display = 'none';
+});
+// Добавляем событие клика к документу
+window.addEventListener('click', onDocumentMouseClick, false);

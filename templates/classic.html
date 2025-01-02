@@ -14,7 +14,7 @@
         canvas {
             display: block;
         }
-        #planet-info {
+/*        #planet-info {
             position: absolute;
             bottom: 10px;
             left: 10px;
@@ -22,10 +22,17 @@
             color: white;
             padding: 10px;
             border-radius: 5px;
-        }
+        }*/
     </style>
 </head>
 <body>
+    <div id="planetOverlay" style="display: none;">
+        <div id="planetInfo">
+            <h2 id="overlayPlanetName"></h2>
+            <p id="overlayPlanetData"></p>
+        </div>
+        <button class="custom-button" id="closeInfo">✖</button>
+    </div>
     <div class="mode-switcher">
         <button class="mode-btn classic-btn" onclick="window.location.href='/classic'">Classic</button>
         <button class="mode-btn realistic-btn" onclick="window.location.href='/realistic'">Realistic</button>

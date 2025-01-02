@@ -1,29 +1,239 @@
 {
-  "name": "Earth",
-  "characteristics": {
-    "diameter": "12,742 km",
-    "mass": "5.97 × 10^24 kg",
-    "average_distance_from_sun": "149.6 million km (1 astronomical unit)",
-    "year_length": "365.25 days",
-    "surface_temperature": {
-      "min": "-88°C",
-      "max": "+58°C",
-      "average": "+15°C"
+  "Sun": {
+    "name": "Sun",
+    "characteristics": {
+      "diameter": "1,391,000 km",
+      "mass": "1.989 × 10^30 kg",
+      "average_distance_from_earth": "149.6 million km",
+      "surface_temperature": {
+        "min": "5,500°C",
+        "max": "5,500°C",
+        "average": "5,500°C"
+      },
+      "composition": {
+        "hydrogen": "74%",
+        "helium": "24%",
+        "other_elements": "2%"
+      }
     },
-    "atmosphere": {
-      "nitrogen": "78%",
-      "oxygen": "21%",
-      "other_gases": "1%"
-    }
+    "current_missions": [
+      {
+        "name": "Parker Solar Probe",
+        "description": "A NASA mission to study the outer corona of the Sun and gather data on solar wind and solar activity."
+      },
+      {
+        "name": "Solar Orbiter",
+        "description": "A collaborative mission between ESA and NASA to study the Sun's poles and solar activity."
+      }
+    ]
   },
-  "current_missions": [
-    {
-      "name": "Earth Satellite Research",
-      "description": "Ongoing research through numerous satellites and missions aimed at studying climate change, atmospheric phenomena, and ecological processes."
+  "Mercury": {
+    "name": "Mercury",
+    "characteristics": {
+      "diameter": "4,880 km",
+      "mass": "3.30 × 10^23 kg",
+      "average_distance_from_sun": "57.9 million km",
+      "year_length": "88 days",
+      "surface_temperature": {
+        "min": "-173°C",
+        "max": "427°C",
+        "average": "167°C"
+      },
+      "atmosphere": {
+        "hydrogen": "42%",
+        "helium": "22%",
+        "other_gases": "36%"
+      }
     },
-    {
-      "name": "International Space Station (ISS)",
-      "description": "A collaborative mission where research is conducted from Earth's orbit in various scientific fields."
-    }
-  ]
+    "current_missions": [
+      {
+        "name": "MESSENGER",
+        "description": "A mission to study Mercury's geology, magnetic field, and thin atmosphere."
+      }
+    ]
+  },
+  "Venus": {
+    "name": "Venus",
+    "characteristics": {
+      "diameter": "12,104 km",
+      "mass": "4.87 × 10^24 kg",
+      "average_distance_from_sun": "108.2 million km",
+      "year_length": "225 days",
+      "surface_temperature": {
+        "min": "462°C",
+        "max": "462°C",
+        "average": "462°C"
+      },
+      "atmosphere": {
+        "carbon_dioxide": "96.5%",
+        "nitrogen": "3.5%",
+        "other_gases": "trace"
+      }
+    },
+    "current_missions": [
+      {
+        "name": "Akatsuki",
+        "description": "A Japanese mission studying Venus' atmosphere and weather patterns."
+      }
+    ]
+  },
+  "Earth": {
+    "name": "Earth",
+    "characteristics": {
+      "diameter": "12,742 km",
+      "mass": "5.97 × 10^24 kg",
+      "average_distance_from_sun": "149.6 million km (1 astronomical unit)",
+      "year_length": "365.25 days",
+      "surface_temperature": {
+        "min": "-88°C",
+        "max": "+58°C",
+        "average": "+15°C"
+      },
+      "atmosphere": {
+        "nitrogen": "78%",
+        "oxygen": "21%",
+        "other_gases": "1%"
+      }
+    },
+    "current_missions": [
+      {
+        "name": "Earth Satellite Research",
+        "description": "Ongoing research through numerous satellites and missions aimed at studying climate change, atmospheric phenomena, and ecological processes."
+      },
+      {
+        "name": "International Space Station (ISS)",
+        "description": "A collaborative mission where research is conducted from Earth's orbit in various scientific fields."
+      }
+    ]
+  },
+  "Mars": {
+    "name": "Mars",
+    "characteristics": {
+      "diameter": "6,779 km",
+      "mass": "6.42 × 10^23 kg",
+      "average_distance_from_sun": "227.9 million km",
+      "year_length": "687 days",
+      "surface_temperature": {
+        "min": "-125°C",
+        "max": "20°C",
+        "average": "-63°C"
+      },
+      "atmosphere": {
+        "carbon_dioxide": "95.3%",
+        "nitrogen": "2.7%",
+        "argon": "1.6%",
+        "other_gases": "0.4%"
+      }
+    },
+    "current_missions": [
+      {
+        "name": "Perseverance Rover",
+        "description": "NASA's latest Mars rover, searching for signs of past microbial life and collecting rock samples."
+      },
+      {
+        "name": "Mars Orbiter Mission (MOM)",
+        "description": "An Indian mission to study Mars' atmosphere and surface."
+      }
+    ]
+  },
+  "Jupiter": {
+    "name": "Jupiter",
+    "characteristics": {
+      "diameter": "139,820 km",
+      "mass": "1.90 × 10^27 kg",
+      "average_distance_from_sun": "778.5 million km",
+      "year_length": "4,333 days",
+      "surface_temperature": {
+        "min": "-108°C",
+        "max": "-108°C",
+        "average": "-108°C"
+      },
+      "atmosphere": {
+        "hydrogen": "90%",
+        "helium": "10%",
+        "other_gases": "trace"
+      }
+    },
+    "current_missions": [
+      {
+        "name": "Juno",
+        "description": "A NASA mission studying Jupiter's atmosphere, magnetosphere, and interior."
+      }
+    ]
+  },
+  "Saturn": {
+    "name": "Saturn",
+    "characteristics": {
+      "diameter": "116,460 km",
+      "mass": "5.68 × 10^26 kg",
+      "average_distance_from_sun": "1.43 billion km",
+      "year_length": "10,759 days",
+      "surface_temperature": {
+        "min": "-139°C",
+        "max": "-139°C",
+        "average": "-139°C"
+      },
+      "atmosphere": {
+        "hydrogen": "96%",
+        "helium": "3%",
+        "other_gases": "1%"
+      }
+    },
+    "current_missions": [
+      {
+        "name": "Cassini",
+        "description": "A mission to study Saturn's rings, moons, and atmosphere, completed in 2017."
+      }
+    ]
+  },
+  "Uranus": {
+    "name": "Uranus",
+    "characteristics": {
+      "diameter": "50,724 km",
+      "mass": "8.68 × 10^25 kg",
+      "average_distance_from_sun": "2.87 billion km",
+      "year_length": "30,687 days",
+      "surface_temperature": {
+        "min": "-224°C",
+        "max": "-224°C",
+        "average": "-224°C"
+      },
+      "atmosphere": {
+        "hydrogen": "83%",
+        "helium": "15%",
+        "methane": "2%"
+      }
+    },
+    "current_missions": [
+      {
+        "name": "Voyager 2",
+        "description": "A NASA mission that performed a flyby of Uranus in 1986."
+      }
+    ]
+  },
+  "Neptune": {
+    "name": "Neptune",
+    "characteristics": {
+      "diameter": "49,244 km",
+      "mass": "1.02 × 10^26 kg",
+      "average_distance_from_sun": "4.50 billion km",
+      "year_length": "60,190 days",
+      "surface_temperature": {
+        "min": "-214°C",
+        "max": "-214°C",
+        "average": "-214°C"
+      },
+      "atmosphere": {
+        "hydrogen": "80%",
+        "helium": "19%",
+        "methane": "1%"
+      }
+    },
+    "current_missions": [
+      {
+        "name": "Voyager 2",
+        "description": "A NASA mission that performed a flyby of Neptune in 1989."
+      }
+    ]
+  }
 }

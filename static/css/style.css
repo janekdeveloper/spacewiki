@@ -51,8 +51,8 @@ p {
     background-color: #476984; /* Колір фону кнопки */
     color: white; /* Колір тексту кнопки */
     border: none; /* Відсутність рамки */
-    padding: 15px 30px; /* Внутрішні відступи */
-    font-size: 1.6em; /* Розмір тексту кнопки */
+    padding: 10px 25px; /* Внутрішні відступи */
+    font-size: 1.1em; /* Розмір тексту кнопки */
     border-radius: 5px; /* Закруглення країв кнопки */
     cursor: pointer; /* Курсор у вигляді руки при наведенні */
     transition: background-color 0.3s; /* Анімація зміни кольору фону */
@@ -99,4 +99,43 @@ p {
     border-radius: 32px;
     cursor: default; /* Неактивное состояние */
     pointer-events: none; /* Отключаем возможность нажать */
+}
+
+.infoBox {
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    background-color:rgba(0,0,0,0.8);
+    color:white;
+    padding:20px;
+    border-radius:8px;
+    z-index:1001;
+}
+
+.closeInfo {
+    display:none;
+    margin-top:10px;
+}
+
+#planetOverlay {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7); /* Напівпрозорий фон */
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 10;
+    width: 300px;
+}
+
+#planetOverlay h2 {
+    margin: 0;
+}
+
+#planetOverlay p {
+    text-align: left;
+    margin: 0;
 }
