@@ -1,3 +1,12 @@
+<!-- /*        #planet-info {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }*/ -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,32 +15,238 @@
     <title>SpaceWiki - classic</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-        canvas {
-            display: block;
-        }
-/*        #planet-info {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-        }*/
-    </style>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        display: flex;
+    }
+
+    canvas {
+        display: block;
+        flex-grow: 1; /* Чтобы занимал всю доступную область слева */
+    }
+
+    /* Окно информации справа */
+    #planetOverlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 30%;
+        max-width: 400px;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        overflow-y: auto;
+        border-left: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Информация о планете */
+    #overlayPlanetData {
+        max-height: 300px;
+        overflow-y: auto;
+        text-align: left;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    /* Горизонтальная галерея */
+    #overlayPlanetGallery {
+        display: flex;
+        overflow-x: auto;
+        max-width: 100%;
+        padding: 10px;
+        gap: 10px;
+    }
+    .planet-image {
+        height: 80px;
+        cursor: pointer;
+        transition: transform 0.2s;
+        border-radius: 5px;
+    }
+    .planet-image:hover {
+        transform: scale(1.1);
+    }
+
+    /* Полноэкранное изображение */
+    #fullScreenOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        justify-content: center;
+        align-items: center;
+    }
+    #fullScreenImage {
+        max-width: 90%;
+        max-height: 90%;
+    }
+    .close-fullscreen {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 30px;
+        color: white;
+        cursor: pointer;
+    }
+
+    /* Кнопка закрытия */
+    .custom-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        color: white;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
+       /* Кнопка открытия чата */
+.chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.chat-toggle:hover {
+    background: #0056b3;
+}
+
+/* Окно чата */
+.chat-box {
+    position: fixed;
+    bottom: 20px;
+    left: -320px;
+    width: 300px;
+    height: 400px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    resize: both; /* ✅ Позволяет изменять размер */
+    min-width: 200px;
+    min-height: 200px;
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+.chat-box.open {
+    left: 20px; /* появление */
+}
+
+/* Заголовок чата */
+.chat-header {
+    background: #007bff;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.chat-close {
+    background: transparent;
+    color: white;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Сообщения чата */
+.chat-messages {
+    flex-grow: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+}
+.chat-messages p {
+    font-size: 14px; /* ✅ Уменьшаем размер текста */
+    line-height: 1.4;
+    word-wrap: break-word;
+    margin: 5px 0;
+    padding: 1px;
+    border-radius: 5px;
+}
+
+/* Стили для Markdown */
+.chat-messages h1,
+.chat-messages h2,
+.chat-messages h3 {
+    font-size: 16px; /* ✅ Делаем заголовки меньше */
+    margin: 5px 0;
+}
+
+.chat-messages pre {
+    font-size: 12px; /* ✅ Код делаем мелким */
+    background: #222;
+    padding: 5px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+.user-message {
+    background: #007bff;
+    text-align: right;
+}
+.bot-message {
+    background: #333;
+    text-align: left;
+}
+
+/* Поле ввода */
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background: #222;
+}
+.chat-input input {
+    flex-grow: 1;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+}
+.chat-input button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+</style>
+
 </head>
 <body>
-    <div id="planetOverlay" style="display: none;">
-        <div id="planetInfo">
-            <h2 id="overlayPlanetName"></h2>
-            <p id="overlayPlanetData"></p>
-        </div>
+    <div id="planetOverlay">
+        <h2 id="overlayPlanetName"></h2>
+        <p id="overlayPlanetData"></p>
+        <div id="overlayPlanetGallery"></div>
         <button class="custom-button" id="closeInfo">✖</button>
+    </div>
+
+    <!-- Полноэкранный просмотр -->
+    <div id="fullScreenOverlay" onclick="closeFullScreen()">
+        <span class="close-fullscreen" onclick="closeFullScreen()">✖</span>
+        <img id="fullScreenImage" src="" alt="Full Screen">
     </div>
     <div class="mode-switcher">
         <button class="mode-btn classic-btn" onclick="window.location.href='/classic'">Classic</button>
@@ -40,7 +255,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
-    <!-- <script type="module" src="OrbitalTrajectory.js"></script> -->
     <script src="{{ url_for('static', filename='js/classic.js') }}"></script>
+<!-- Кнопка открытия чата -->
+<button id="chatToggle" class="chat-toggle">💬</button>
+
+<!-- Окно чата -->
+<div id="chatBox" class="chat-box">
+    <div class="chat-header">
+        <span>AI Chat</span>
+        <button class="chat-close" onclick="toggleChat()">✖</button>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Type a message..." onkeypress="handleChatKeypress(event)">
+        <button onclick="sendMessage()">➤</button>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
 </body>
 </html>

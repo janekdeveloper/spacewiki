@@ -211,6 +211,52 @@ const trajectories = orbitalData.map(data => new OrbitalTrajectory(
     data.period,
     data.size));
 
+// Переключение чата
+function toggleChat() {
+    const chatBox = document.getElementById("chatBox");
+    chatBox.classList.toggle("open");
+}
+
+// Обработчик отправки сообщений
+function sendMessage() {
+    const inputField = document.getElementById("chatInput");
+    const message = inputField.value.trim();
+    
+    if (message === "") return;
+
+    // Добавляем сообщение пользователя
+    addMessage("user", message);
+    inputField.value = "";
+
+    // Отправляем запрос на сервер
+    fetch(`/ask?message=${encodeURIComponent(message)}`)
+        .then(response => response.json())
+        .then(data => addMessage("bot", data.response))
+        .catch(() => addMessage("bot", "Error contacting AI."));
+}
+
+// Обработка клавиши Enter
+function handleChatKeypress(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+}
+
+// Функция добавления сообщений
+// Функция добавления сообщений с поддержкой Markdown
+function addMessage(sender, text) {
+    const chatMessages = document.getElementById("chatMessages");
+    const messageElement = document.createElement("p");
+
+    // Рендеринг Markdown
+    messageElement.innerHTML = marked.parse(text);
+    messageElement.classList.add(sender === "user" ? "user-message" : "bot-message");
+
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // Прокрутка вниз
+}
+
+
 // Создание планеты с текстурой
 function createPlanetWithTexture(name, radius, texturePath, distance) {
     const geometry = new THREE.SphereGeometry(radius+4, 128, 128);
@@ -500,13 +546,15 @@ function PlanetDataShow(name) {
     const overlay = document.getElementById('planetOverlay');
     const nameElement = document.getElementById('overlayPlanetName');
     const dataElement = document.getElementById('overlayPlanetData');
+    const galleryElement = document.getElementById('overlayPlanetGallery');
 
     const planetInfo = planetInfoDatas[name];
+    planetNameText.innerHTML = name
 
     if (planetInfo) {
         const characteristics = planetInfo.characteristics;
 
-        // Заполнение информацией о планете
+        // Заполняем текстовую информацию
         dataElement.innerHTML = `
             <strong>Diameter:</strong> ${characteristics.diameter} <br>
             <strong>Mass:</strong> ${characteristics.mass} <br>
@@ -515,13 +563,43 @@ function PlanetDataShow(name) {
             <strong>Temperature:</strong> Min: ${characteristics.surface_temperature.min}, Max: ${characteristics.surface_temperature.max}, Avg: ${characteristics.surface_temperature.average} <br>
             <strong>Atmosphere Composition:</strong> Nitrogen: ${characteristics.atmosphere.nitrogen}, Oxygen: ${characteristics.atmosphere.oxygen}, Other Gases: ${characteristics.atmosphere.other_gases} <br>
         `;
+
+        // Добавляем изображения
+        galleryElement.innerHTML = "";
+        for (let i = 1; i <= 3; i++) {
+            const imgPath = `/static/photos/${name.toLowerCase()}_${i}.jpg`;
+            const imgElement = document.createElement('img');
+            imgElement.src = imgPath;
+            imgElement.alt = `${name} Image ${i}`;
+            imgElement.classList.add('planet-image');
+            imgElement.onclick = function () {
+                openFullScreen(imgPath);
+            };
+            galleryElement.appendChild(imgElement);
+        }
     } else {
         dataElement.innerHTML = 'No data available.';
+        galleryElement.innerHTML = '';
     }
 
     nameElement.textContent = name;
-    overlay.style.display = 'block';
+    overlay.style.display = 'flex';
 }
+
+// Открытие полноэкранного просмотра
+function openFullScreen(imageSrc) {
+    const fullScreenOverlay = document.getElementById('fullScreenOverlay');
+    const fullScreenImg = document.getElementById('fullScreenImage');
+
+    fullScreenImg.src = imageSrc;
+    fullScreenOverlay.style.display = 'flex';
+}
+
+// Закрытие полноэкранного просмотра
+function closeFullScreen() {
+    document.getElementById('fullScreenOverlay').style.display = 'none';
+}
+
 
 function onDocumentMouseClick(event) {
     event.preventDefault();
@@ -543,6 +621,14 @@ function onDocumentMouseClick(event) {
         console.log(`Clicked on: ${selectedPlanet.name}`);
     }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const chatToggle = document.getElementById("chatToggle");
+    if (chatToggle) {
+        chatToggle.addEventListener("click", toggleChat);
+    }
+    document.getElementById('planetOverlay').style.display = 'none';
+});
 
 document.getElementById('closeInfo').addEventListener('click', () => {
     document.getElementById('planetOverlay').style.display = 'none';
