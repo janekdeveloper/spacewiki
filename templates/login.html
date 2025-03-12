@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Вхід</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Пароль" required>
+            <button type="submit">Увійти</button>
+        </form>
+        <p>Не зареєстрували акаунт? <a href="{{ url_for('auth.register_page') }}">Зробіть це ось тут!</a></p>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            const response = await fetch("/auth/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                localStorage.setItem("token", result.access_token); // Сохранение токена в localStorage
+                // document.getElementById("message").textContent = "Login successful!";
+                window.location.href = "/classic"; // Перенаправление на защищенную страницу
+            } else {
+                document.getElementById("message").textContent = result.error;
+            }
+        });
+    </script>
+</body>
+</html>

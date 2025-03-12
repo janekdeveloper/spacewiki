@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Реєстрація</h2>
+        <form id="registerForm">
+            <input type="text" id="username" placeholder="Ім'я користувача" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Пароль" required>
+            <button type="submit">Зареєструватись</button>
+        </form>
+        <p>Вже маєте акаунт? <a href="{{ url_for('auth.login_page') }}">Увійдіть тут</a></p>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            const response = await fetch("/auth/api/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, email, password })
+            });
+
+            const result = await response.json();
+            document.getElementById("message").textContent = result.message || result.error;
+
+            if (response.ok && result.access_token) {
+                localStorage.setItem("token", result.access_token);
+                window.location.href = "/classic";
+            }
+        });
+    </script>
+</body>
+</html>
+

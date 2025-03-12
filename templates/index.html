@@ -6,18 +6,24 @@
     <title>SpaceWiki</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> <!-- Підключення CSS-файлу -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-    <script>
-        // Функция для перенаправления
-        function redirectToClassic() {
-            window.location.href = '/classic'; // Перенаправление на /classic
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </head>
 <body>
+    <header class="appbar">
+        <nav class="nav-container">
+            <div class="auth-buttons" id="authButtons">
+                <button class="nav-button" id="registerBtn" onclick="redirectToRegister()">Зареєструватися</button>
+                <button class="nav-button" id="loginBtn" onclick="redirectToLogin()">Увійти</button>
+                <button class="nav-button" id="logoutBtn" onclick="logout()" style="display: none;">Вийти</button>
+            </div>
+        </nav>
+    </header>
+
+
     <div class="container">
         <h1>SpaceWiki</h1>
         <hr>
-        <button class="custom-button" onclick="redirectToClassic()">Press to start</button>
+        <button class="custom-button" onclick="redirectToClassic()">Натисніть щоб почати</button>
     </div>
 </body>
 </html>

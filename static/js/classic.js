@@ -211,29 +211,74 @@ const trajectories = orbitalData.map(data => new OrbitalTrajectory(
     data.period,
     data.size));
 
+async function loadChatHistory() {
+    const token = localStorage.getItem("token");
+    if (!token) return;  // Если токена нет, пропускаем загрузку
+
+    try {
+        const response = await fetch("/chat/history", {
+            method: "GET",
+            headers: { "Authorization": token }
+        });
+
+        const history = await response.json();
+
+        if (history.error) return; // Если ошибка, не загружаем
+
+        // Добавляем загруженные сообщения в чат
+        history.forEach(({ message, response }) => {
+            addMessage("user", message);
+            addMessage("bot", response);
+        });
+    } catch (error) {
+        console.error("Error loading chat history:", error);
+    }
+}
+
 // Переключение чата
 function toggleChat() {
     const chatBox = document.getElementById("chatBox");
+    const isOpening = !chatBox.classList.contains("open");
+
+    if (isOpening) {
+        loadChatHistory(); // Загружаем историю только при открытии
+    }
+
     chatBox.classList.toggle("open");
 }
 
 // Обработчик отправки сообщений
-function sendMessage() {
+async function sendMessage() {
     const inputField = document.getElementById("chatInput");
     const message = inputField.value.trim();
     
     if (message === "") return;
 
-    // Добавляем сообщение пользователя
+    // Добавляем сообщение пользователя в чат
     addMessage("user", message);
     inputField.value = "";
 
+    // Получаем токен из localStorage
+    const token = localStorage.getItem("token");
+
     // Отправляем запрос на сервер
-    fetch(`/ask?message=${encodeURIComponent(message)}`)
-        .then(response => response.json())
-        .then(data => addMessage("bot", data.response))
-        .catch(() => addMessage("bot", "Error contacting AI."));
+    try {
+        const response = await fetch("/ask", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                ...(token && { "Authorization": token }) // Добавляем токен, если он есть
+            },
+            body: JSON.stringify({ message })
+        });
+
+        const result = await response.json();
+        addMessage("bot", result.response);
+    } catch (error) {
+        addMessage("bot", "Error contacting AI.");
+    }
 }
+
 
 // Обработка клавиши Enter
 function handleChatKeypress(event) {
@@ -556,12 +601,12 @@ function PlanetDataShow(name) {
 
         // Заполняем текстовую информацию
         dataElement.innerHTML = `
-            <strong>Diameter:</strong> ${characteristics.diameter} <br>
-            <strong>Mass:</strong> ${characteristics.mass} <br>
-            <strong>Distance from Sun:</strong> ${characteristics.average_distance_from_sun} <br>
-            <strong>Year Length:</strong> ${characteristics.year_length} <br>
-            <strong>Temperature:</strong> Min: ${characteristics.surface_temperature.min}, Max: ${characteristics.surface_temperature.max}, Avg: ${characteristics.surface_temperature.average} <br>
-            <strong>Atmosphere Composition:</strong> Nitrogen: ${characteristics.atmosphere.nitrogen}, Oxygen: ${characteristics.atmosphere.oxygen}, Other Gases: ${characteristics.atmosphere.other_gases} <br>
+            <strong>Діаметр:</strong> ${characteristics.diameter} <br>
+            <strong>Маса:</strong> ${characteristics.mass} <br>
+            <strong>Дистанція від Сонця:</strong> ${characteristics.average_distance_from_sun} <br>
+            <strong>Довжина року:</strong> ${characteristics.year_length} <br>
+            <strong>Температура:</strong> Мін.: ${characteristics.surface_temperature.min}, Макс.: ${characteristics.surface_temperature.max}, Середня: ${characteristics.surface_temperature.average} <br>
+            <strong>Склад атмосфери:</strong> Нітроген: ${characteristics.atmosphere.nitrogen}, Оксиген: ${characteristics.atmosphere.oxygen}, Інше: ${characteristics.atmosphere.other_gases} <br>
         `;
 
         // Добавляем изображения
